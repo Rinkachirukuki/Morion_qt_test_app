@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QMap>
 #include <QMessageBox>
+#include <QList>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,31 +27,32 @@ void MainWindow::showEvent(QShowEvent* e) {
 
 
 void MainWindow::connectToDataBase(){
-    if (!db.open()){
-        QMessageBox msgBox;
 
-        msgBox.setText(tr("Ошибка подключения к БД. Повторить подключение?"));
+    bool connected = db.open();
 
-        QPushButton* pButtonYes = msgBox.addButton(tr("Да"), QMessageBox::YesRole);
-        msgBox.addButton(tr("Нет"), QMessageBox::NoRole);
+    if (!connected)
+        do {
+            QMessageBox msgBox;
 
-       msgBox.exec();
+            msgBox.setText(tr("Ошибка подключения к БД."));
 
-       if ((QPushButton*)(msgBox.clickedButton()) == pButtonYes) {
-           emit reconnect();
-       }
-       else{
-           exit(0);
-       }
-    }
+            QPushButton* pButtonYes = msgBox.addButton(tr("Повторить подключение"), QMessageBox::YesRole);
+            msgBox.addButton(tr("Выход"), QMessageBox::NoRole);
+
+            msgBox.exec();
+
+            if ((QPushButton*)(msgBox.clickedButton()) != pButtonYes)
+                exit(0);
+
+
+    } while(!connected);
 }
 
-
-QMap<int, QString> MainWindow::loadComboBoxItems(){
+QMap<QString, int> MainWindow::loadComboBoxItems(){
 
     connectToDataBase();
 
-    QMap<int, QString> map = QMap<int, QString>();
+    QMap<QString, int> map = QMap<QString, int>();
 
     QSqlQuery query = QSqlQuery(db);
 
@@ -65,10 +67,11 @@ QMap<int, QString> MainWindow::loadComboBoxItems(){
     }
 
     while(query.next()){
-        map.insert(query.value(0).toInt(),query.value(1).toString());
-    }
+        map.insert(query.value(1).toString(),query.value(0).toInt());
+}
 
     return map;
+
 }
 
 void MainWindow::updateComboBox(){
@@ -77,21 +80,44 @@ void MainWindow::updateComboBox(){
 
     ui->comboBox->clear();
 
-    foreach (QString item, cBoxItems){
+    QList<QString> keys = cBoxItems.keys();
+
+    foreach (QString item, keys){
         ui->comboBox->addItem(item);
     }
 }
 
-void
+void MainWindow::updateListWidget(int id){
 
+    connectToDataBase();
+
+    QSqlQuery query = QSqlQuery(db);
+
+
+    if (!query.exec(("SELECT family, first_name FROM prj_group_addrbook WHERE prj_group_id = ") + QString::number(id))){
+
+        QMessageBox msgBox;
+
+        msgBox.setText("Произошла ошибка при выполнении запроса к БД: \n" + query.lastError().text());
+        msgBox.exec();
+
+        exit(0);
+    }
+
+    while(query.next()){
+        ui->listWidget->addItem(query.value(0).toString() + " " + query.value(1).toString());
+    }
+
+}
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-
 void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 {
+    ui->listWidget->clear();
 
+    updateListWidget(cBoxItems.find(arg1).value());
 }

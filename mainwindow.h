@@ -24,9 +24,11 @@ private:
     QSqlDatabase db;
     QSqlTableModel* model;
 
-    QMap<int, QString> cBoxItems;
-    QMap<int, QString> loadComboBoxItems();
+    QMap<QString, int> cBoxItems;
+    QMap<QString, int> loadComboBoxItems();
     void updateComboBox();
+
+    void updateListWidget(int id);
 
     void showEvent(QShowEvent* e) override;
 private slots:
