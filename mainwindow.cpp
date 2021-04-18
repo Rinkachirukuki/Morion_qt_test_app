@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QList>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -87,14 +88,15 @@ void MainWindow::updateComboBox(){
     }
 }
 
-void MainWindow::updateListWidget(int id){
+QList<prj_group_addrbook_answer> MainWindow::loadListWidgetItems(int id){
 
     connectToDataBase();
 
+    QList<prj_group_addrbook_answer> list = QList<prj_group_addrbook_answer>();
+
     QSqlQuery query = QSqlQuery(db);
 
-
-    if (!query.exec(("SELECT family, first_name FROM prj_group_addrbook WHERE prj_group_id = ") + QString::number(id))){
+    if (!query.exec(("SELECT prj_group_addrbook_id, family, first_name FROM prj_group_addrbook WHERE prj_group_id = ") + QString::number(id))){
 
         QMessageBox msgBox;
 
@@ -104,15 +106,36 @@ void MainWindow::updateListWidget(int id){
         exit(0);
     }
 
+
     while(query.next()){
-        ui->listWidget->addItem(query.value(0).toString() + " " + query.value(1).toString());
-    }
+        list.append(prj_group_addrbook_answer(query.value(0).toString(),query.value(1).toString(),query.value(2).toString()));
+}
+
+    return list;
 
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+
+
+void MainWindow::updateListWidget(int id){
+
+    ui->listWidget->clear();
+
+    QList<prj_group_addrbook_answer> lWidItems = loadListWidgetItems(id);
+
+    foreach (prj_group_addrbook_answer item, lWidItems){
+
+        QListWidgetItem *wlItem = new QListWidgetItem(item);
+
+        QVariant qv = QVariant();
+
+        qv.setValue(item);
+
+        wlItem->setData(Qt::UserRole, qv);
+
+        ui->listWidget->addItem(wlItem);
+    }
+
 }
 
 void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
@@ -121,3 +144,16 @@ void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 
     updateListWidget(cBoxItems.find(arg1).value());
 }
+
+void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    prj_group_addrbook_answer i = item->data(Qt::UserRole).value<prj_group_addrbook_answer>();
+
+    qDebug() << i.prj_group_addrbook_id;
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+

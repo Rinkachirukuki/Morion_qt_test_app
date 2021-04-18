@@ -9,13 +9,17 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    addform.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    structures.h
 
 HEADERS += \
+    addform.h \
     mainwindow.h
 
 FORMS += \
+    addform.ui \
     mainwindow.ui
 
 TRANSLATIONS += \
