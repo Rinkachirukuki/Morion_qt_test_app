@@ -10,12 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     addform.cpp \
+    dbconnector.cpp \
     main.cpp \
     mainwindow.cpp \
     structures.h
 
 HEADERS += \
     addform.h \
+    dbconnector.h \
     mainwindow.h
 
 FORMS += \

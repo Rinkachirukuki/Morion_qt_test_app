@@ -1,20 +1,47 @@
 #include <QString>
 #include <QVariant>
 
-struct prj_group_addrbook_answer
+struct PrjGroupAddrbookAnswer
 {
-    prj_group_addrbook_answer(){ }
+    PrjGroupAddrbookAnswer(){ }
 
-    prj_group_addrbook_answer(QString prj_group_addrbook_id, QString  family, QString  first_name){
+    PrjGroupAddrbookAnswer(int prj_group_addrbook_id, QString  family, QString  first_name){
         this->prj_group_addrbook_id = prj_group_addrbook_id;
         this->family = family;
         this->first_name = first_name;
+        this->prj_group_id = -1;
     }
-    QString  prj_group_addrbook_id;
+
+    PrjGroupAddrbookAnswer(int prj_group_addrbook_id, QString  family, QString  first_name,int prj_group_id){
+        this->prj_group_addrbook_id = prj_group_addrbook_id;
+        this->family = family;
+        this->first_name = first_name;
+        this->prj_group_id = prj_group_id;
+    }
+
+    int  prj_group_addrbook_id;
     QString  family;
     QString  first_name;
+    int prj_group_id;
 
     operator QString() { return (family + " " + first_name); }
 };
 
-Q_DECLARE_METATYPE(prj_group_addrbook_answer);
+Q_DECLARE_METATYPE(PrjGroupAddrbookAnswer);
+
+struct PrjGroupAnswer
+{
+    PrjGroupAnswer(){ }
+
+    PrjGroupAnswer(int prj_group_id, QString  name){
+        this->prj_group_id = prj_group_id;
+        this->name =  name;
+    }
+
+    int  prj_group_id;
+    QString  name;
+
+    operator QString() { return name; }
+};
+
+Q_DECLARE_METATYPE(PrjGroupAnswer);
