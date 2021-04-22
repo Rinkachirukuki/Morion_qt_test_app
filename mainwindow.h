@@ -30,6 +30,8 @@ private:
     DBConnector* dbconnector;
     QSqlTableModel* model;
 
+    bool ascSort = true;
+
     void updateComboBox();
     void updateListWidget();
 
@@ -49,6 +51,8 @@ private slots:
     void on_pushButton_clicked();
 
     void on_lineEdit_returnPressed();
+
+    void on_pushButton_3_clicked();
 
 signals:
     void closeHandler();

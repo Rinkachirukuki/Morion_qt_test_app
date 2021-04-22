@@ -247,3 +247,17 @@ AddForm* MainWindow::prepareAddFormEditVer(PrjGroupAddrbookAnswer listItem, PrjG
 
     return f;
 }
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    if (ascSort){
+        ui->listWidget->sortItems(Qt::DescendingOrder);
+        ui->pushButton_3->setText("По убыванию");
+    }
+    else{
+        ui->listWidget->sortItems(Qt::AscendingOrder);
+        ui->pushButton_3->setText("По возрастанию");
+    }
+    ascSort = !ascSort;
+
+}

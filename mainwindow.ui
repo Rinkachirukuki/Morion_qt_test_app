@@ -26,6 +26,16 @@
       <property name="selectionMode">
        <enum>QAbstractItemView::MultiSelection</enum>
       </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>По возрастанию</string>
+      </property>
      </widget>
     </item>
     <item>
